@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <script src="/js/jquery.min.js"></script>
+    <style>
+        .bor {
+                border: 1px solid #eee;
+                margin-bottom: 10px;
+            }
+        </style>
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <p>Welcome to <%= title %>
+    </p>
+    <div class="bor info">
+    </div>
+    <div class="bor">
+        <input type="text" class="name" placeholder="请输入姓名">
+        <input type="text" class="phone" placeholder="请输入电话">
+        <input type="text" class="motto" placeholder="请输入格言">
+        <button class="update-info">提交</button>
+    </div>
+    <div class="post">
+        <input type="text" class="title" placeholder="请输入标题">
+        <input type="text" class="content" placeholder="请输入标题">
+        <button class="ok">提交</button>
+    </div>
+    <div class="post">
+        <input type="text" class="user" placeholder="user">
+        <input type="text" class="pwd" placeholder="pwd">
+        <button class="login">login</button>
+    </div>
+    <div>图片上传：<input type="file" name="fileToUpload" id="fileToUpload" class="fileupload" /></div>
+    <img style="width: 100px;" src="" />
+    <div class="test"></div>
+</body>
+    <script>
+        $.get('/api/searchArticle', {}, function (data) {
+            console.log('----userinfo:', data)
+        })
+    </script>
+</html>
