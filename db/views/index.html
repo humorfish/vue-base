@@ -3,7 +3,7 @@
 
 <head>
     <title>
-        <%= title %>
+        title
     </title>
     <link rel="stylesheet" href="/stylesheets/style.css" />
     <script src="/js/jquery.min.js"></script>
@@ -17,9 +17,9 @@
 
 <body>
     <h1>
-        <%= title %>
+        title
     </h1>
-    <p>Welcome to <%= title %>
+    <p>Welcome to title
     </p>
     <div class="bor info">
     </div>
@@ -40,12 +40,65 @@
         <button class="login">login</button>
     </div>
     <div>图片上传：<input type="file" name="fileToUpload" id="fileToUpload" class="fileupload" /></div>
-    <img style="width: 100px;" src="" />
+    <img id="preview" style="height:130px;width:117px;border-width:0px;"/>
     <div class="test"></div>
 </body>
     <script>
-        $.get('/api/searchArticle', {}, function (data) {
-            console.log('----userinfo:', data)
-        })
+        $.post('/api/login', {user: 'test', pwd: 'test'}, function (params) {
+            localStorage.setItem('userInfo', JSON.stringify(params.result));
+            $.get('/api/searchArticle', {token: params.result.token, user: params.result.user, id: params.result.id}, function (data) {
+                console.log('----userinfo:', data);
+            });
+        });
+        // 图片上传
+        $('.fileupload').change(function(event) {
+            if ($('.fileupload').val().length) {
+
+                var $file = $(this);
+                var fileObj = $file[0];
+    
+                var windowURL = window.URL || window.webkitURL;
+                var dataURL;
+                var $img = $("img");
+    
+                if (fileObj && fileObj.files && fileObj.files[0]) {
+                    dataURL = windowURL.createObjectURL(fileObj.files[0]);
+                    $img.attr('src', dataURL);
+                } else {
+                    dataURL = $file.val();
+                    var imgObj = document.getElementById("preview");
+                    imgObj.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                    imgObj.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = dataURL;
+                }
+          
+
+                var fileName = $('.fileupload').val();
+                console.log(fileName);                
+                var extension = fileName.substring(fileName.lastIndexOf('.'), fileName.length).toLowerCase();
+                if (extension == ".jpg" || extension == ".png") {
+                    var data = new FormData();
+                    data.append('fulAvatar', $('#fileToUpload')[0].files[0]);
+                    console.log(data);
+                    
+                    $.ajax({
+                        url: '/api/uploadImg',
+                        type: 'POST',
+                        data: data,
+                        cache: false,
+                        contentType: false, //不可缺参数
+                        processData: false, //不可缺参数
+                        success: function(data) {
+                            console.log('-------upload img:', data);
+                            if (data.code == 200) {
+                                $('img').attr('src', data.result);
+                            }
+                        },
+                        error: function() {
+                            console.log('error');
+                        }
+                    });
+                }
+            }
+        });
     </script>
 </html>
